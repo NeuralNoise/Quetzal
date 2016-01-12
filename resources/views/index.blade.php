@@ -17,13 +17,24 @@
 		<div class="container col-md-6 col-md-offset-3 text-center" style="padding-top: 20vh; min-height: 100vh;">
 			<h1 style="font-size: 120px;">{{ trans('base.quetzal') }}</h1>
 			<p>{{ trans('base.description') }}</p>
-			<div class="well animated fadeInDown hide" style="padding-top: 0; padding-bottom: 0;" id="generate">
+			@if (count($errors) > 0)
+				<div class="col-md-offset-2 col-md-8">
+					<div class="alert alert-danger text-left">
+		             	<ul>
+		               	 	@foreach ($errors->all() as $error)
+							 	<li>{{ $error }}</li>
+		                	 @endforeach
+		             	</ul>
+		         	</div>
+				</div>
+     		@endif
+			<div class="well animated fadeIn hide" style="padding-top: 0; padding-bottom: 0;" id="generate">
 				<form action="/generate" method="post">
 					<h3>{{ trans('base.generate') }}</h3><hr>
 					<div class="form-group">
 						<div class="input-group">
 	  						<span class="input-group-addon"><i class="fa fa-globe"></i></span>
-	  						<input type="text" class="form-control" name="fqdn" id="fqdn" placeholder="Choose Prefix - e.x. mynode">
+	  						<input type="text" class="form-control" name="fqdn" id="fqdn" placeholder="Choose Prefix">
 							<span class="input-group-addon">.dactyl.link</span>
 						</div>
 					</div>
@@ -31,13 +42,14 @@
 						<label for="ip" class="text-left"></label>
 						<div class="input-group">
 	  						<span class="input-group-addon"><i class="fa fa-location-arrow"></i></span>
-	  						<input type="text" class="form-control" name="ip" id="ip" placeholder="Node IP - e.x. 172.16.254.1">
+	  						<input type="text" class="form-control" name="ip" id="ip" placeholder="Node IP">
 						</div>
 					</div>
+					<input type="hidden" name="_token" value="{{ csrf_token() }}">
 					<button type="submit" class="btn btn-block btn-primary">{{ trans('base.submit') }}</button>
 				</form>
 			</div>
-			<div class="well animated fadeInDown hide" style="padding-top: 0; padding-bottom: 0;" id="delete">
+			<div class="well animated fadeIn hide" style="padding-top: 0; padding-bottom: 0;" id="delete">
 				<form action="/destroy" method="post">
 					<h3>{{ trans('base.destroy') }}</h3><hr>
 					<div class="form-group">
@@ -46,6 +58,7 @@
 	  						<input type="text" class="form-control" name="fqdn" id="fqdn" placeholder="Enter Token">
 						</div>
 					</div>
+					<input type="hidden" name="_token" value="{{ csrf_token() }}">
 					<button type="submit" class="btn btn-block btn-primary">{{ trans('base.submit') }}</button>
 				</form>
 			</div>
