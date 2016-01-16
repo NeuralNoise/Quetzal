@@ -7,8 +7,6 @@
 		<link rel="stylesheet" href="{{ url('css/quetzal.min.css') }}">
         <link rel="stylesheet" href="{{ url('css/animate.css') }}">
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.7/socket.io.min.js"></script>
@@ -18,7 +16,7 @@
 			<h1 style="font-size: 120px;">{{ trans('base.quetzal') }}</h1>
 			<p>{{ trans('base.description') }}</p>
 			@if (count($errors) > 0)
-				<div class="col-md-offset-2 col-md-8">
+				<div class="col-md-12" id="alerts">
 					<div class="alert alert-danger text-left">
 		             	<ul>
 		               	 	@foreach ($errors->all() as $error)
@@ -26,6 +24,11 @@
 		                	 @endforeach
 		             	</ul>
 		         	</div>
+				</div>
+     		@endif
+			@if (null !== session('key'))
+				<div class="col-md-12" id="alerts">
+					<div class="alert alert-success text-left">{!! trans('base.created_record', ['key' => session('key')]) !!}</div>
 				</div>
      		@endif
 			<div class="well animated fadeIn hide" style="padding-top: 0; padding-bottom: 0;" id="generate">
@@ -85,10 +88,12 @@
 	<script type="text/javascript">
 	$(document).ready(function() {
 		$('#generateBtn').click(function() {
+			$('#alerts').addClass('hide')
 			$('#delete').addClass('hide')
 			$('#generate').removeClass('hide')
 		});
 		$('#deleteBtn').click(function() {
+			$('#alerts').addClass('hide')
 			$('#generate').addClass('hide')
 			$('#delete').removeClass('hide')
 		});

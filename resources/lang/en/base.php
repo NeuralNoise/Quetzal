@@ -11,6 +11,7 @@ return [
     |
     */
 
+    'created_record' => 'The record has been created. Please store the following key <code>:key</code> in your records. It will be required to easily delete or modify your FQDN.',
     'description' => 'Quetzal is an official service that allows you to create free FQDNs for Pterodactyl.',
     'destroy' => 'Destroy Record',
     'help' => 'Help',
