@@ -26,7 +26,7 @@ class BackendController extends BaseController
             ]
         ])->getBody()->getContents())->result['0']->id;
 
-        $response = $client->request('POST', '/client/v4/zones/'.$key.'/dns_records', [
+        $record = json_decode($client->request('POST', '/client/v4/zones/'.$key.'/dns_records', [
             'headers' => [
                 'X-Auth-Email' => env('CLOUDFLARE_EMAIL'),
                 'X-Auth-Key' => env('CLOUDFLARE_KEY')
@@ -36,9 +36,7 @@ class BackendController extends BaseController
                 'name' => $request->input('fqdn').config('cloudflare.domain'),
                 'content' => $request->input('ip')
             ]
-        ]);
-
-        $record = json_decode($response->getBody()->getContents())->result->id;
+        ])->getBody()->getContents())->result->id;
 
         DB::table('records')->insert(['token' => $record, 'fqdn' => $request->input('fqdn'), 'ip' => $request->input('ip')]);
 
@@ -47,8 +45,27 @@ class BackendController extends BaseController
 
     public function postDestroy(Request $request) {
         $this->validate($request, [
-            'title' => 'required|unique:posts|max:255',
-            'body' => 'required',
+            'token' => 'required|exists:records'
         ]);
+
+        $client = new GuzzleHttp\Client(['base_uri' => 'https://api.cloudflare.com']);
+
+        $key = json_decode($client->request('GET', '/client/v4/zones?name='.env('CLOUDFLARE_DOMAIN').'&status=active&page=1&per_page=1', [
+            'headers' => [
+                'X-Auth-Email' => env('CLOUDFLARE_EMAIL'),
+                'X-Auth-Key' => env('CLOUDFLARE_KEY')
+            ]
+        ])->getBody()->getContents())->result['0']->id;
+
+        $response = $client->request('DELETE', '/client/v4/zones/'.$key.'/dns_records/'.$request->input('token'), [
+            'headers' => [
+                'X-Auth-Email' => env('CLOUDFLARE_EMAIL'),
+                'X-Auth-Key' => env('CLOUDFLARE_KEY')
+            ]
+        ]);
+
+        DB::table('records')->where(['token' => $request->input('token')])->delete();
+
+        return redirect()->route('index')->with('delete', 1);
     }
 }

@@ -31,6 +31,11 @@
 					<div class="alert alert-success text-left">{!! trans('base.created_record', ['key' => session('key')]) !!}</div>
 				</div>
      		@endif
+			@if (null !== session('delete'))
+				<div class="col-md-12" id="alerts">
+					<div class="alert alert-warning text-left">{!! trans('base.deleted_record') !!}</div>
+				</div>
+     		@endif
 			<div class="well animated fadeIn hide" style="padding-top: 0; padding-bottom: 0;" id="generate">
 				<form action="/generate" method="post">
 					<h3>{{ trans('base.generate') }}</h3><hr>
@@ -58,7 +63,7 @@
 					<div class="form-group">
 						<div class="input-group">
 	  						<span class="input-group-addon"><i class="fa fa-key"></i></span>
-	  						<input type="text" class="form-control" name="fqdn" id="fqdn" placeholder="Enter Token">
+	  						<input type="text" class="form-control" name="token" id="token" placeholder="Enter Token">
 						</div>
 					</div>
 					<input type="hidden" name="_token" value="{{ csrf_token() }}">
