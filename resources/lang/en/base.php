@@ -16,13 +16,17 @@ return [
     'description' => 'Quetzal is an official service that allows you to create free FQDNs for Pterodactyl.',
     'destroy' => 'Destroy Record',
     'help' => 'Help',
-    'pterodactyl_home' => 'Pterodactyl Home',
+    'home' => 'Home',
     'tos' => [
         'string' => 'Terms of Service',
         'content' => 'Legal policy goes here.'
     ],
     'generate' => 'Generate Domain',
     'submit' => 'Submit',
-    'quetzal' => 'Quetzal'
+    'quetzal' => 'Quetzal',
+    'urls' => [
+        'help' => 'https://community.pterodactyl.io',
+        'home' => 'https://pterodactyl.io'
+    ]
 
 ];

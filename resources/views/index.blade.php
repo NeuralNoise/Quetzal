@@ -74,7 +74,10 @@
 				<button type="button" class="btn btn-success" id="generateBtn"><i class="fa fa-plus"></i> {{ trans('base.generate') }}</button>
   				<button type="button" class="btn btn-danger" id="deleteBtn"><i class="fa fa-trash"></i> {{ trans('base.destroy') }}</button>
 			</div>
-			<hr><p><a href="#" data-toggle="modal" data-target="#legal">{{ trans('base.tos.string') }}</a> | <a href="#">{{ trans('base.help') }}</a> | <a href="#">{{ trans('base.pterodactyl_home') }}</a></p>
+			<hr><p>
+				<a href="#" data-toggle="modal" data-target="#legal">{{ trans('base.tos.string') }}</a> |
+				<a href="{!! trans('base.urls.help') !!}">{{ trans('base.help') }}</a> |
+				<a href="{!! trans('base.urls.home') !!}">{{ trans('base.home') }}</a></p>
 		</div>
 		<div class="modal fade" id="legal" aria-labelledby="legalLabel">
 		    <div class="modal-dialog" role="document">
