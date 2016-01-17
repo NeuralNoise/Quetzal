@@ -56,13 +56,13 @@ class FlareService
     }
 
 	/**
-     * Delete a record and remove it from the database.
+     * Destroy a record and remove it from the database.
      *
      * @param string $fqdn
      * @param string $ip
      * @return void
      */
-    public function delete($token)
+    public function destroy($token)
     {
 		$zone = $this->zone();
 
