@@ -6,7 +6,8 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 
 class FrontendController extends BaseController
 {
-    public function getIndex() {
+    public function getIndex()
+    {
         return view('index');
     }
 }

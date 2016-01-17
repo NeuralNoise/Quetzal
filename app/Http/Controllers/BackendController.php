@@ -13,7 +13,8 @@ use App\Services\FlareService;
 
 class BackendController extends BaseController
 {
-    public function postGenerate(Request $request) {
+    public function postGenerate(Request $request)
+    {
         $this->validate($request, [
             'fqdn' => 'required|string|max:16|unique:records',
             'ip' => 'required|ip|unique:records',
@@ -25,7 +26,8 @@ class BackendController extends BaseController
         return redirect()->route('index')->with('key', $record);
     }
 
-    public function postDestroy(Request $request) {
+    public function postDestroy(Request $request)
+    {
         $this->validate($request, [
             'token' => 'required|exists:records'
         ]);
@@ -36,7 +38,8 @@ class BackendController extends BaseController
         return redirect()->route('index')->with('delete', 1);
     }
 
-    public function apiPostGenerate(Request $request) {
+    public function apiPostGenerate(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'fqdn' => 'required|string|max:16|unique:records',
             'ip' => 'required|ip|unique:records',
@@ -52,7 +55,8 @@ class BackendController extends BaseController
         return response()->json(['success' => 1, 'message' => 'The record was created successfully.', 'token' => $record]);
     }
 
-    public function apiDeleteDestroy(Request $request) {
+    public function apiDeleteDestroy(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'token' => 'required|exists:records'
         ]);
