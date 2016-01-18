@@ -21,7 +21,7 @@ class BackendController extends BaseController
         ]);
 
         $flare = new FlareService;
-        $record = $flare->create($request->input('fqdn'), $request->input('ip'));
+        $record = $flare->create($request->input('domain'), $request->input('fqdn'), $request->input('ip'));
 
         if($record != false) {
             return redirect()->route('index')->with('key', $record);
@@ -54,7 +54,7 @@ class BackendController extends BaseController
         }
 
         $flare = new FlareService;
-        $record = $flare->create($request->input('fqdn'), $request->input('ip'));
+        $record = $flare->create($request->input('domain'), $request->input('fqdn'), $request->input('ip'));
 
         if($record != false) {
             return response()->json(['success' => 1, 'message' => 'The record was created successfully.', 'token' => $record]);

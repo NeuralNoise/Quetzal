@@ -11,18 +11,31 @@ class FlareService
      *
      * @return string
      */
-    public function zone()
+    public function zone($fqdn = 'all')
     {
-        $client = new GuzzleHttp\Client(['base_uri' => 'https://api.cloudflare.com']);
+        if($fqdn != 'all') {
+            $client = new GuzzleHttp\Client(['base_uri' => 'https://api.cloudflare.com']);
 
-        $zone = json_decode($client->request('GET', '/client/v4/zones?name='.env('CLOUDFLARE_DOMAIN').'&status=active&page=1&per_page=1', [
-            'headers' => [
-                'X-Auth-Email' => env('CLOUDFLARE_EMAIL'),
-                'X-Auth-Key' => env('CLOUDFLARE_KEY')
-            ]
-        ])->getBody()->getContents())->result['0']->id;
+            $zone = json_decode($client->request('GET', '/client/v4/zones?name='.$fqdn.'&status=active&page=1&per_page=1', [
+                'headers' => [
+                    'X-Auth-Email' => env('CLOUDFLARE_EMAIL'),
+                    'X-Auth-Key' => env('CLOUDFLARE_KEY')
+                ]
+            ])->getBody()->getContents())->result['0']->id;
 
-        return $zone;
+            return $zone;
+        } else {
+            $client = new GuzzleHttp\Client(['base_uri' => 'https://api.cloudflare.com']);
+
+            $zones = json_decode($client->request('GET', '/client/v4/zones?status=active', [
+                'headers' => [
+                    'X-Auth-Email' => env('CLOUDFLARE_EMAIL'),
+                    'X-Auth-Key' => env('CLOUDFLARE_KEY')
+                ]
+            ])->getBody()->getContents())->result;
+
+            return $zones;
+        }
     }
 
     /**
@@ -57,9 +70,9 @@ class FlareService
      * @param string $ip
      * @return string
      */
-    public function create($fqdn, $ip)
+    public function create($domain, $fqdn, $ip)
     {
-        $zone = $this->zone();
+        $zone = $this->zone($domain);
 
         if($this->available($zone, $fqdn, $ip)) {
             $client = new GuzzleHttp\Client(['base_uri' => 'https://api.cloudflare.com']);
@@ -91,15 +104,17 @@ class FlareService
      */
     public function destroy($token)
     {
-        $zone = $this->zone();
+        $zones = $this->zone();
+        $client = new GuzzleHttp\Client(['base_uri' => 'https://api.cloudflare.com', ]);
 
-        $client = new GuzzleHttp\Client(['base_uri' => 'https://api.cloudflare.com']);
-
-        $client->request('DELETE', '/client/v4/zones/'.$zone.'/dns_records/'.$token, [
-            'headers' => [
-                'X-Auth-Email' => env('CLOUDFLARE_EMAIL'),
-                'X-Auth-Key' => env('CLOUDFLARE_KEY')
-            ]
-        ]);
+        foreach($zones as $zone) {
+            $client->request('DELETE', '/client/v4/zones/'.$zone->id.'/dns_records/'.$token, [
+                'http_errors' => false,
+                'headers' => [
+                    'X-Auth-Email' => env('CLOUDFLARE_EMAIL'),
+                    'X-Auth-Key' => env('CLOUDFLARE_KEY')
+                ]
+            ]);
+        }
     }
 }

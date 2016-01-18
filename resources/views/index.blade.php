@@ -40,25 +40,17 @@
                          {{ session('error') }}
                      </div>
                  @endif
-                <div class="ui segment" id="generate" hidden>
+                <div class="ui segment" id="generate" style="padding-bottom: 0;" hidden>
                     <form class="ui form" action="/generate" method="post">
                         <div class="field">
                             <div class="ui right labeled input">
                                 <div class="ui label"><i class="icon browser"></i></div>
                                 <input type="text" name="fqdn" placeholder="Choose Prefix">
-                                <div class="ui dropdown label">
+                                <select class="ui dropdown label compact selection" name="domain">
                                     @foreach($domains as $domain)
-                                        @if($domain === reset($domains))
-                                            <div class="text">.{{ $domain }}</div>
-                                        @endif
+                                        <option value="{{ $domain }}">.{{ $domain }}</option>
                                     @endforeach
-                                    <i class="dropdown icon"></i>
-                                    <div class="menu">
-                                        @foreach($domains as $domain)
-                                            <div class="item">.{{ $domain }}</div>
-                                        @endforeach
-                                    </div>
-                                </div>
+                                </select>
                             </div>
                         </div>
                         <div class="field">
@@ -71,7 +63,7 @@
                         <button class="fluid ui blue button" type="submit">{{ trans('base.submit') }}</button>
                     </form>
                 </div>
-                <div class="ui segment" id="destroy" hidden>
+                <div class="ui segment" id="destroy" style="padding-bottom: 0;" hidden>
                     <form class="ui form" action="/destroy" method="post">
                         <div class="field">
                             <div class="ui left labeled input">
