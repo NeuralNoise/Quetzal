@@ -14,7 +14,7 @@ The Quetzal API is very simple and does not require any authentication.
 
 | Name  | Description |
 | ------------- | ------------- |
-| fqdn  | The prefix of the sub-domain that you would like to create. Examples: `coolnode` or `server1`  |
+| fqdn  | The whole domain you'd like to create. Examples: `node.mywebsite.com` or `prefix.fqdn.net`  |
 | ip | The IP that the new record should point to. Examples:  `1.1.1.1` or `172.16.254.1`|
 
 **Success:**
