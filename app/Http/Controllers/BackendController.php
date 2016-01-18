@@ -23,7 +23,11 @@ class BackendController extends BaseController
         $flare = new FlareService;
         $record = $flare->create($request->input('fqdn'), $request->input('ip'));
 
-        return redirect()->route('index')->with('key', $record);
+        if($record != false) {
+            return redirect()->route('index')->with('key', $record);
+        } else {
+            return redirect()->route('index')->with('error', trans('validation.exists', ['attribute' => 'ip or fqdn']));
+        }
     }
 
     public function postDestroy(Request $request)

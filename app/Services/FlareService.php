@@ -26,6 +26,31 @@ class FlareService
     }
 
     /**
+     * Check if a similar record already exists.
+     *
+     * @param string $fqdn
+     * @param string $ip
+     * @return string
+     */
+    public function available($zone, $fqdn, $ip)
+    {
+        $client = new GuzzleHttp\Client(['base_uri' => 'https://api.cloudflare.com']);
+
+        $exists = json_decode($client->request('GET', '/client/v4/zones/'.$zone.'/dns_records?name='.$fqdn.'&content='.$ip.'&match=any', [
+            'headers' => [
+                'X-Auth-Email' => env('CLOUDFLARE_EMAIL'),
+                'X-Auth-Key' => env('CLOUDFLARE_KEY')
+            ]
+        ])->getBody()->getContents())->result;
+
+        if($exists) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * Create a Cloudflare record and store it in the database.
      *
      * @param string $fqdn
@@ -36,23 +61,28 @@ class FlareService
     {
         $zone = $this->zone();
 
-        $client = new GuzzleHttp\Client(['base_uri' => 'https://api.cloudflare.com']);
+        if($this->available($zone, $fqdn, $ip)) {
+            $client = new GuzzleHttp\Client(['base_uri' => 'https://api.cloudflare.com']);
 
-        $record = json_decode($client->request('POST', '/client/v4/zones/'.$zone.'/dns_records', [
-            'headers' => [
-                'X-Auth-Email' => env('CLOUDFLARE_EMAIL'),
-                'X-Auth-Key' => env('CLOUDFLARE_KEY')
-            ],
-            'json' => [
-                'type' => 'A',
-                'name' => $fqdn,
-                'content' => $ip
-            ]
-        ])->getBody()->getContents())->result->id;
+            $record = json_decode($client->request('POST', '/client/v4/zones/'.$zone.'/dns_records', [
+                'headers' => [
+                    'X-Auth-Email' => env('CLOUDFLARE_EMAIL'),
+                    'X-Auth-Key' => env('CLOUDFLARE_KEY')
+                ],
+                'json' => [
+                    'type' => 'A',
+                    'name' => $fqdn,
+                    'content' => $ip
+                ]
+            ])->getBody()->getContents())->result->id;
 
-        DB::table('records')->insert(['token' => $record, 'fqdn' => $fqdn, 'ip' => $ip]);
+            DB::table('records')->insert(['token' => $record, 'fqdn' => $fqdn, 'ip' => $ip]);
 
-        return $record;
+            return $record;
+        } else {
+            return false;
+        }
+
     }
 
     /**

@@ -34,6 +34,12 @@
                          {!! trans('base.deleted_record') !!}
                      </div>
                  @endif
+                 @if (null !== session('error'))
+                     <div class="ui error message">
+                         <i class="close icon"></i>
+                         {{ session('error') }}
+                     </div>
+                 @endif
                 <div class="ui segment" id="generate" hidden>
                     <form class="ui form" action="/generate" method="post">
                         <div class="field">
