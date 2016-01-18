@@ -76,13 +76,10 @@ class FlareService
                 ]
             ])->getBody()->getContents())->result->id;
 
-            DB::table('records')->insert(['token' => $record, 'fqdn' => $fqdn, 'ip' => $ip]);
-
             return $record;
         } else {
             return false;
         }
-
     }
 
     /**
@@ -104,7 +101,5 @@ class FlareService
                 'X-Auth-Key' => env('CLOUDFLARE_KEY')
             ]
         ]);
-
-        DB::table('records')->where(['token' => $token])->delete();
     }
 }

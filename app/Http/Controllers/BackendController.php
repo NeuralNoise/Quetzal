@@ -16,8 +16,8 @@ class BackendController extends BaseController
     public function postGenerate(Request $request)
     {
         $this->validate($request, [
-            'fqdn' => 'required|string|max:16|unique:records',
-            'ip' => 'required|ip|unique:records',
+            'fqdn' => 'required|string|max:16',
+            'ip' => 'required|ip',
         ]);
 
         $flare = new FlareService;
@@ -33,7 +33,7 @@ class BackendController extends BaseController
     public function postDestroy(Request $request)
     {
         $this->validate($request, [
-            'token' => 'required|exists:records'
+            'token' => 'required'
         ]);
 
         $flare = new FlareService;
@@ -45,8 +45,8 @@ class BackendController extends BaseController
     public function apiPostGenerate(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'fqdn' => 'required|string|max:16|unique:records',
-            'ip' => 'required|ip|unique:records',
+            'fqdn' => 'required|string|max:16',
+            'ip' => 'required|ip',
         ]);
 
         if($validator->fails()) {
@@ -56,13 +56,17 @@ class BackendController extends BaseController
         $flare = new FlareService;
         $record = $flare->create($request->input('fqdn'), $request->input('ip'));
 
-        return response()->json(['success' => 1, 'message' => 'The record was created successfully.', 'token' => $record]);
+        if($record != false) {
+            return response()->json(['success' => 1, 'message' => 'The record was created successfully.', 'token' => $record]);
+        } else {
+            return redirect()->json(['success' => 0, 'message' => trans('validation.exists', ['attribute' => 'ip or fqdn'])]);
+        }
     }
 
     public function apiDeleteDestroy(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'token' => 'required|exists:records'
+            'token' => 'required'
         ]);
 
         if($validator->fails()) {
