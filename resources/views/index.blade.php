@@ -1,9 +1,9 @@
 <html>
     <head>
         <title>{{ trans('base.app') }}</title>
-        <link rel="stylesheet" type="text/css" href="{{ url('semantic/dist/semantic.min.css') }}">
-        <script src="{{ url('jquery.min.js') }}"></script>
-        <script src="{{ url('semantic/dist/semantic.min.js') }}"></script>
+        <link rel="stylesheet" type="text/css" href="{{ url('assets/semantic.min.css') }}">
+        <script src="{{ url('assets/jquery.min.js') }}"></script>
+        <script src="{{ url('assets/semantic.min.js') }}"></script>
     </head>
     <body>
         <div class="ui grid container centered" style="padding-top: 20vh; min-height: 100vh;">
@@ -77,13 +77,14 @@
                 </div>
                 <div class="ui buttons">
                     <button class="ui green button" id="generateBtn"><i class="plus icon"></i> {{ trans('base.generate') }}</button>
+                    <div class="or"></div>
                     <button class="ui red button" id="destroyBtn"><i class="remove icon"></i>{{ trans('base.destroy') }}</button>
                 </div>
                 <div class="ui divider"></div>
                 <div class="ui horizontal bulleted link list">
-                    <a class="item" id="legal">{{ trans('base.legal.label') }}</a>
                     <a class="item" href="{!! trans('base.urls.home') !!}">{{ trans('base.home') }}</a>
-                    <a class="item" href="{!! trans('base.urls.help') !!}">{{ trans('base.help') }}</a>
+                    <a class="item" id="legal">{{ trans('base.legal.label') }}</a>
+                    <a class="item" href="{!! trans('base.urls.help') !!}">{{ env('SUPPORT_EMAIL', '@') }}</a>
                 </div>
             </div>
             <div class="four wide column"></div>
