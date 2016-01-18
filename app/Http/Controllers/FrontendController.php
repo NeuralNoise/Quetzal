@@ -8,6 +8,6 @@ class FrontendController extends BaseController
 {
     public function getIndex()
     {
-        return view('index');
+        return view('index', ['domains' => explode(', ', env('CLOUDFLARE_DOMAIN'))]);
     }
 }

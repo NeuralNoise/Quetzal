@@ -1,110 +1,116 @@
 <html>
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="robots" content="noindex">
-        <link rel="stylesheet" href="{{ url('css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ url('css/quetzal.min.css') }}">
-        <link rel="stylesheet" href="{{ url('css/animate.css') }}">
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.7/socket.io.min.js"></script>
+        <title>{{ trans('base.app') }}</title>
+        <link rel="stylesheet" type="text/css" href="{{ url('semantic/dist/semantic.min.css') }}">
+        <script src="{{ url('jquery.min.js') }}"></script>
+        <script src="{{ url('semantic/dist/semantic.min.js') }}"></script>
     </head>
     <body>
-        <div class="container col-md-6 col-md-offset-3 text-center" style="padding-top: 20vh; min-height: 100vh;">
-            <h1 style="font-size: 120px;">{{ trans('base.quetzal') }}</h1>
-            <p>{{ trans('base.description') }}</p>
-            @if (count($errors) > 0)
-                <div class="col-md-12" id="alerts">
-                    <div class="alert alert-danger text-left">
-                         <ul>
-                                @foreach ($errors->all() as $error)
-                                 <li>{{ $error }}</li>
-                             @endforeach
-                         </ul>
+        <div class="ui grid container centered" style="padding-top: 20vh; min-height: 100vh;">
+            <div class="four wide column"></div>
+            <div class="eight wide column center aligned">
+                <h1 style="font-size: 96px;">{{ trans('base.app') }}</h1>
+                <p>{{ trans('base.description') }}</p>
+                @if (count($errors) > 0)
+                    <div class="ui error message">
+                        <i class="close icon"></i>
+                        <div class="header">{!! trans('base.whoops') !!}</div>
+                        <ul class="list">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                @if (null !== session('key'))
+                    <div class="ui positive message">
+                        <i class="close icon"></i>
+                        {!! trans('base.created_record', ['key' => session('key')]) !!}
+                    </div>
+                 @endif
+                 @if (null !== session('delete'))
+                     <div class="ui positive message">
+                         <i class="close icon"></i>
+                         {!! trans('base.deleted_record') !!}
                      </div>
-                </div>
-             @endif
-            @if (null !== session('key'))
-                <div class="col-md-12" id="alerts">
-                    <div class="alert alert-success text-left">{!! trans('base.created_record', ['key' => session('key')]) !!}</div>
-                </div>
-             @endif
-            @if (null !== session('delete'))
-                <div class="col-md-12" id="alerts">
-                    <div class="alert alert-warning text-left">{!! trans('base.deleted_record') !!}</div>
-                </div>
-             @endif
-            <div class="well animated fadeIn hide" style="padding-top: 0; padding-bottom: 0;" id="generate">
-                <form action="/generate" method="post">
-                    <h3>{{ trans('base.generate') }}</h3><hr>
-                    <div class="form-group">
-                        <div class="input-group">
-                              <span class="input-group-addon"><i class="fa fa-globe"></i></span>
-                              <input type="text" class="form-control" name="fqdn" id="fqdn" placeholder="Choose Prefix">
-                            <span class="input-group-addon">.dactyl.link</span>
+                 @endif
+                <div class="ui segment" id="generate" hidden>
+                    <form class="ui form" action="/generate" method="post">
+                        <div class="field">
+                            <div class="ui right labeled input">
+                                <div class="ui label"><i class="icon browser"></i></div>
+                                <input type="text" name="fqdn" placeholder="Choose Prefix">
+                                <div class="ui dropdown label">
+                                    @foreach($domains as $domain)
+                                        @if($domain === reset($domains))
+                                            <div class="text">.{{ $domain }}</div>
+                                        @endif
+                                    @endforeach
+                                    <i class="dropdown icon"></i>
+                                    <div class="menu">
+                                        @foreach($domains as $domain)
+                                            <div class="item">.{{ $domain }}</div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="ip" class="text-left"></label>
-                        <div class="input-group">
-                              <span class="input-group-addon"><i class="fa fa-location-arrow"></i></span>
-                              <input type="text" class="form-control" name="ip" id="ip" placeholder="Node IP">
+                        <div class="field">
+                            <div class="ui left labeled input">
+                                <div class="ui left label"><i class="icon send"></i></div>
+                                <input type="text" name="ip" placeholder="Enter IP">
+                            </div>
                         </div>
-                     </div>
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="btn btn-block btn-primary">{{ trans('base.submit') }}</button>
-                </form>
-            </div>
-            <div class="well animated fadeIn hide" style="padding-top: 0; padding-bottom: 0;" id="delete">
-                <form action="/destroy" method="post">
-                    <h3>{{ trans('base.destroy') }}</h3><hr>
-                    <div class="form-group">
-                        <div class="input-group">
-                              <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                              <input type="text" class="form-control" name="token" id="token" placeholder="Enter Token">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <button class="fluid ui blue button" type="submit">{{ trans('base.submit') }}</button>
+                    </form>
+                </div>
+                <div class="ui segment" id="destroy" hidden>
+                    <form class="ui form" action="/destroy" method="post">
+                        <div class="field">
+                            <div class="ui left labeled input">
+                                <div class="ui left label"><i class="icon key"></i></div>
+                                <input type="text" name="token" placeholder="Record Token">
+                            </div>
                         </div>
-                    </div>
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="btn btn-block btn-primary">{{ trans('base.submit') }}</button>
-                </form>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-success" id="generateBtn"><i class="fa fa-plus"></i> {{ trans('base.generate') }}</button>
-                  <button type="button" class="btn btn-danger" id="deleteBtn"><i class="fa fa-trash"></i> {{ trans('base.destroy') }}</button>
-            </div>
-            <hr><p>
-                <a href="#" data-toggle="modal" data-target="#legal">{{ trans('base.tos.string') }}</a> |
-                <a href="{!! trans('base.urls.help') !!}">{{ trans('base.help') }}</a> |
-                <a href="{!! trans('base.urls.home') !!}">{{ trans('base.home') }}</a></p>
-        </div>
-        <div class="modal fade" id="legal" aria-labelledby="legalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="legalLabel">{{ trans('base.tos.string') }}</h4>
-                    </div>
-                    <div class="modal-body">
-                        {{ trans('base.tos.content') }}
-                    </div>
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <button class="fluid ui blue button" type="submit">{{ trans('base.submit') }}</button>
+                    </form>
+                </div>
+                <div class="ui buttons">
+                    <button class="ui green button" id="generateBtn"><i class="plus icon"></i> {{ trans('base.generate') }}</button>
+                    <button class="ui red button" id="destroyBtn"><i class="remove icon"></i>{{ trans('base.destroy') }}</button>
+                </div>
+                <div class="ui divider"></div>
+                <div class="ui horizontal bulleted link list">
+                    <a class="item" id="legal">{{ trans('base.legal.label') }}</a>
+                    <a class="item" href="{!! trans('base.urls.home') !!}">{{ trans('base.home') }}</a>
+                    <a class="item" href="{!! trans('base.urls.help') !!}">{{ trans('base.help') }}</a>
                 </div>
             </div>
+            <div class="four wide column"></div>
         </div>
     </body>
+    <div class="ui modal">
+        <div class="header">{{ trans('base.legal.label') }}</div>
+        <div class="content">
+            <p>{!! trans('base.legal.content') !!}</p>
+        </div>
+    </div>
     <script type="text/javascript">
-    $(document).ready(function() {
-        $('#generateBtn').click(function() {
-            $('#alerts').addClass('hide')
-            $('#delete').addClass('hide')
-            $('#generate').removeClass('hide')
+        $(document).ready(function() {
+            $('#generateBtn').click(function() {
+                $('#generate').transition('scale');
+                $('#destroy').transition({'animation': 'scale out down', 'duration': 0});
+            });
+            $('#destroyBtn').click(function() {
+                $('#destroy').transition('scale');
+                $('#generate').transition({'animation': 'scale out down', 'duration': 0});
+            });
+            $('.ui.dropdown').dropdown();
+            $('#legal').click(function() {
+                $('.ui.modal').modal('show');
+            });
         });
-        $('#deleteBtn').click(function() {
-            $('#alerts').addClass('hide')
-            $('#generate').addClass('hide')
-            $('#delete').removeClass('hide')
-        });
-    });
     </script>
 </html>
