@@ -49,12 +49,14 @@ class BackendController extends BaseController
             'ip' => 'required|ip',
         ]);
 
+        $domain = explode('.', $request->input('fqdn'))[1];
+
         if($validator->fails()) {
             return response()->json(['success' => 0, 'message' => $validator->errors()->all()[0]]);
         }
 
         $flare = new FlareService;
-        $record = $flare->create($request->input('domain'), $request->input('fqdn'), $request->input('ip'));
+        $record = $flare->create($domain, $request->input('fqdn'), $request->input('ip'));
 
         if($record != false) {
             return response()->json(['success' => 1, 'message' => 'The record was created successfully.', 'token' => $record]);
